@@ -19,7 +19,7 @@ import static dev.warriorrr.finspect.FInspect.prefix;
 
 import java.util.List;
 
-public class BlockListener implements Listener {
+public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerDisconnect(PlayerQuitEvent event) {
         if (inspectingPlayers.contains(event.getPlayer().getUniqueId()))

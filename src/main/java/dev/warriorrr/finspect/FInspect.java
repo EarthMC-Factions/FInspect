@@ -20,7 +20,7 @@ public class FInspect extends Addon {
     @Override
     public void onEnable() {
         FactionsX.baseCommand.addSubCommand(inspectCommand);
-        Bukkit.getPluginManager().registerEvents(new BlockListener(), this.getFactionsXInstance());
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this.getFactionsXInstance());
     }
 
     @Override
