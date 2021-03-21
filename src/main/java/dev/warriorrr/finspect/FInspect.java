@@ -6,8 +6,11 @@ import net.prosavage.factionsx.addonframework.Addon;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 
@@ -15,12 +18,22 @@ public class FInspect extends Addon {
 
     public static String prefix = ChatColor.GOLD + "[" + gradient("EMCF", Color.GREEN, new Color(0, 102, 0)) + ChatColor.GOLD + "]";
     public static List<UUID> inspectingPlayers = new ArrayList<UUID>();
+    public static Map<UUID, Long> cooldowns = new HashMap<UUID, Long>();
     private static InspectCommand inspectCommand = new InspectCommand();
 
     @Override
     public void onEnable() {
         FactionsX.baseCommand.addSubCommand(inspectCommand);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this.getFactionsXInstance());
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("FactionsX"), new Runnable() {
+            @Override
+            public void run() {
+                for (Entry<UUID, Long> entry : cooldowns.entrySet())
+                    if (System.currentTimeMillis() > entry.getValue())
+                        cooldowns.remove(entry.getKey());
+            }
+        }, 1200, 1200);
     }
 
     @Override

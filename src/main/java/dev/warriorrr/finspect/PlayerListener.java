@@ -16,6 +16,7 @@ import net.prosavage.factionsx.manager.GridManager;
 
 import static dev.warriorrr.finspect.FInspect.inspectingPlayers;
 import static dev.warriorrr.finspect.FInspect.prefix;
+import static dev.warriorrr.finspect.FInspect.cooldowns;
 
 import java.util.List;
 
@@ -34,12 +35,24 @@ public class PlayerListener implements Listener {
         if (!inspectingPlayers.contains(event.getPlayer().getUniqueId()) || !canInspect(event.getPlayer(), event.getClickedBlock()))
             return;
 
+        int cooldown = 5;
+        if (cooldowns.containsKey(event.getPlayer().getUniqueId()) && cooldowns.get(event.getPlayer().getUniqueId()) > System.currentTimeMillis()) {
+            long seconds = (cooldowns.get(event.getPlayer().getUniqueId()) - System.currentTimeMillis()) / 1000 % cooldown;
+            event.getPlayer().sendMessage(prefix + ChatColor.RED + " Inspect is on cooldown! Time remaining: " + seconds + " seconds.");
+            return;
+        }
+
+
         List<String> results = CoreProtectUtil.getParsedBlockHistory(event.getClickedBlock());
         if (results.size() == 1)
             event.getPlayer().sendMessage(prefix + ChatColor.BLUE + " No block data found for this location.");
         else
             for (String result : results)
                 event.getPlayer().sendMessage(result);
+        if (cooldowns.containsKey(event.getPlayer().getUniqueId()))
+            cooldowns.replace(event.getPlayer().getUniqueId(), System.currentTimeMillis() + cooldown * 1000);
+        else
+            cooldowns.put(event.getPlayer().getUniqueId(), System.currentTimeMillis() + cooldown * 1000);
     }
 
     private boolean canInspect(Player player, Block block) {
