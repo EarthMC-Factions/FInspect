@@ -61,8 +61,6 @@ public class PlayerListener implements Listener {
             return false;
         if (faction.getLeader().getPlayer().getUniqueId() != player.getUniqueId())
             return false;
-        if (player.getInventory().getItemInMainHand().getType() != Material.ARROW)
-            return false;
         return true;
     }
 }
